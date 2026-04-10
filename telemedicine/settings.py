@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'accounts',
     'users',
     'doctors',
-    'appointments',
+    'appointment',
     'payments',
 ]
 
