@@ -39,7 +39,7 @@ def payment_detail(request, pk):
     return Response(serializer.data)
 
 
-# NEW: VERIFY PAYMENT
+# VERIFY PAYMENT
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def verify_payment(request):
@@ -56,6 +56,10 @@ def verify_payment(request):
         )
     except Payment.DoesNotExist:
         return Response({"error": "Payment not found"}, status=404)
+    
+    # Prevent double verification
+    if payment.status == "successful":
+        return Response ({"message": "Payment already verified"})
 
     # TEMP VERIFICATION LOGIC (before Paystack)
     payment.status = "successful"
