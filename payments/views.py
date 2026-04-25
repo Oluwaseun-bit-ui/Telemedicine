@@ -66,8 +66,9 @@ def verify_payment(request):
     payment.save()
 
     # UPDATE APPOINTMENT STATUS
-    appointment = payment.appointment
-    appointment.status = "confirmed"
-    appointment.save()
+    if payment.appointment:
+     appointment = payment.appointment
+     appointment.status = "paid"
+     appointment.save()
 
     return Response({"message": "Payment verified successfully"})
