@@ -24,9 +24,12 @@ def chat_messages(request, appointment_id):
         return Response({"error": "Not allowed"}, status=403)
 
     if request.method == 'GET':
-        messages = Message.objects.filter(appointment=appointment)
-        serializer = MessageSerializer(messages, many=True)
-        return Response(serializer.data)
+        messages = Message.objects.filter(
+            appointment=appointment
+    ).order_by('timestamp')
+
+    serializer = MessageSerializer(messages, many=True)
+    return Response(serializer.data)
 
     if request.method == 'POST':
         data = request.data.copy()

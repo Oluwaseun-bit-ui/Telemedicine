@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <input id="msg" placeholder="Type message" />
+    <button onclick="sendMessage()">Send</button>
+
+    <ul id="messages"></ul>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+      const socket = io("http://localhost:3000");
+
+      socket.emit("register", Math.floor(Math.random() * 100)); // random user
+      socket.emit("join_room", 5); // appointment ID
+
+      socket.on("receive_message", (msg) => {
+        const li = document.createElement("li");
+        li.innerText = msg;
+        document.getElementById("messages").appendChild(li);
+      });
+
+      function sendMessage() {
+        const msg = document.getElementById("msg").value;
+
+        socket.emit("send_message", {
+          appointmentId: 5,
+          message: msg,
+        });
+      }
+    </script>
+  </body>
+</html>
