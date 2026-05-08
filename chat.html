@@ -1,32 +1,84 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <input id="msg" placeholder="Type message" />
-    <button onclick="sendMessage()">Send</button>
 
-    <ul id="messages"></ul>
+<head>
+  <title>Telemedicine Chat</title>
+</head>
 
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-    <script>
-      const socket = io("http://localhost:3000");
+<body>
 
-      socket.emit("register", Math.floor(Math.random() * 100)); // random user
-      socket.emit("join_room", 5); // appointment ID
+  <h2>Real-Time Telemedicine Chat</h2>
 
-      socket.on("receive_message", (msg) => {
-        const li = document.createElement("li");
-        li.innerText = msg;
-        document.getElementById("messages").appendChild(li);
+  <input
+    id="msg"
+    placeholder="Type message"
+  />
+
+  <button onclick="sendMessage()">
+    Send
+  </button>
+
+  <hr>
+
+  <ul id="messages"></ul>
+
+  <!-- Socket.IO -->
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+  <script>
+
+    // CONNECT TO NODE SERVER
+    const socket = io("http://localhost:3000");
+
+    // JOIN APPOINTMENT ROOM
+    socket.emit("join_room", 2);
+
+    console.log("Joined room 2");
+
+    // RECEIVE LIVE MESSAGES
+    socket.on("receive_message", (data) => {
+
+      console.log("Received:", data);
+
+      const li = document.createElement("li");
+
+      li.innerText =
+        data.sender_email +
+        ": " +
+        data.content;
+
+      document
+        .getElementById("messages")
+        .appendChild(li);
+
+    });
+
+    // SEND MESSAGE
+    function sendMessage() {
+
+      const msg =
+        document.getElementById("msg").value;
+
+      // prevent empty message
+      if (!msg) return;
+
+      const messageData = {
+        sender_email: "browser@test.com",
+        content: msg
+      };
+
+      // send to socket server
+      socket.emit("send_message", {
+        appointmentId: 2,
+        message: messageData
       });
 
-      function sendMessage() {
-        const msg = document.getElementById("msg").value;
+      // clear input
+      document.getElementById("msg").value = "";
 
-        socket.emit("send_message", {
-          appointmentId: 5,
-          message: msg,
-        });
-      }
-    </script>
-  </body>
+    }
+
+  </script>
+
+</body>
 </html>
