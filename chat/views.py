@@ -42,7 +42,7 @@ def chat_messages(request, appointment_id):
 
         messages = Message.objects.filter(
             appointment=appointment
-        ).order_by('timestamp')
+        ).select_related('sender').order_by('timestamp')
 
         serializer = MessageSerializer(
             messages,
