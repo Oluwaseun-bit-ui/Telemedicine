@@ -8,10 +8,20 @@ User = get_user_model()
 def register(request):
     data = request.data
 
+    email = data.get("email")
+
+    if User.objects.filter(email=email).exists():
+        return Response(
+            {"error": "Email already exists"},
+            status=400
+        )
+
     user = User.objects.create_user(
-        email=data['email'],
-        username=data['username'],
-        password=data['password']
+        username=data.get("username"),
+        email=email,
+        password=data.get("password")
     )
 
-    return Response({"message": "User created successfully"})
+    return Response({
+        "message": "User created successfully"
+    })
